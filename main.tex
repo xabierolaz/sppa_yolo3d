@@ -71,6 +71,23 @@ given.
 UAV digital twin; family-conditioned part graph; primitive actor;
 geovisualization of dynamic objects.
 
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.95\linewidth,height=0.52\textheight,keepaspectratio]{figures/fig_hero_fastmode.png}
+\caption{The operating-point argument in one view: semantic telemetry in,
+displayable geometry out---SPPA-MVFit against six current open 3D generators
+on the same inputs, each at its fastest documented official operating point
+\emph{with} its official background-removal preprocessing (exploratory; no
+3D ground truth on the real crops; full per-case provenance in RP). Columns:
+input crop, YOLOE-26s detector evidence, the compiled SPPA proxy (CPU,
+milliseconds, no GPU), and TripoSR, SF3D, SPAR3D, Hunyuan3D-2mini, TripoSG,
+and TRELLIS.2, each annotated with measured warm generation time, triangle
+count, and peak VRAM on the same RTX~5090 workstation. Neural columns are
+qualitative context, not a ranking; measured IoU comparisons are the sealed
+synthetic wave of Section~\ref{sec:neural-external-wave}.}
+\label{fig:real-flight-probes}
+\end{figure}
+
 \section{Introduction}
 
 The motivating mission is safe remote piloting through a geospatial twin. A
@@ -926,23 +943,6 @@ reported. Further archived probes, replay audits, input-mode
 ablations, a verifier-gated open-label probe of 20 awkward labels (\(8/20\)
 recipes verified, zero critical mismatches), and a role-preservation
 diagnostic are retained in RP.
-
-\begin{figure}[!htb]
-\centering
-\includegraphics[width=0.85\linewidth,height=0.5\textheight,keepaspectratio]{figures/fig_hero_fastmode.png}
-\caption{The operating-point argument in one view: semantic telemetry in,
-displayable geometry out---SPPA-MVFit against six current open 3D generators
-on the same inputs, each at its fastest documented official operating point
-\emph{with} its official background-removal preprocessing (exploratory; no
-3D ground truth on the real crops; full per-case provenance in RP). Columns:
-input crop, YOLOE-26s detector evidence, the compiled SPPA proxy (CPU,
-milliseconds, no GPU), and TripoSR, SF3D, SPAR3D, Hunyuan3D-2mini, TripoSG,
-and TRELLIS.2, each annotated with measured warm generation time, triangle
-count, and peak VRAM on the same RTX~5090 workstation. Neural columns are
-qualitative context, not a ranking; measured IoU comparisons are the sealed
-synthetic wave of Section~\ref{sec:neural-external-wave}.}
-\label{fig:real-flight-probes}
-\end{figure}
 
 The deployment layer is the descriptor/update contract consumed by the
 optional Unreal Engine 5.7 backend. Table~\ref{tab:deployment-runtime-summary}
