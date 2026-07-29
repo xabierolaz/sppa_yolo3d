@@ -82,9 +82,19 @@ on the same inputs, each at its fastest documented official operating point
 input crop, YOLOE-26s detector evidence, the compiled SPPA proxy (CPU,
 milliseconds, no GPU), and TripoSR, SF3D, SPAR3D, Hunyuan3D-2mini, TripoSG,
 and TRELLIS.2, each annotated with measured warm generation time, triangle
-count, and peak VRAM on the same RTX~5090 workstation. Neural columns are
-qualitative context, not a ranking; measured IoU comparisons are the sealed
-synthetic wave of Section~\ref{sec:neural-external-wave}.}
+count, and peak VRAM on the same RTX~5090 workstation. Rows tower/tractor
+are real flight crops (2026-07-21), biker/tractor+trailer real road and
+mountain crops (2026-07-03), and cow/car real aerial photos (2026-07-29).
+Aerial views defeat the neural columns in two distinct ways:
+plausible-but-wrong geometry (blobs, flat cards) or hard failure---on the
+official shared inputs Hunyuan3D-2mini returns no surface on all three
+aerial vehicle crops, so its car and tractor+trailer cells show the
+best-effort meshes of a debris-free manual-crop retry (same pipeline),
+which exist but are degenerate (flat slab, thin blade); the tractor cell
+reports the hard failure (no mesh at 5, 20, or 50 steps, on any crop).
+Neural columns are qualitative context, not a ranking; measured IoU
+comparisons are the sealed synthetic wave of
+Section~\ref{sec:neural-external-wave}.}
 \label{fig:real-flight-probes}
 \end{figure}
 
