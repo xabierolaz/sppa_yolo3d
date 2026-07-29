@@ -21,7 +21,7 @@
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
 
 \title{Instant Semantic Proxy Reconstruction for UAV Digital Twins\\
-under Degraded Sensing (SPPA-MVFit)}
+under Degraded Sensing (SPPA)}
 \author{Authors omitted for review}
 \date{}
 
@@ -46,7 +46,7 @@ the twin can be kept current if---and only if---each detection can be turned
 into displayable 3D geometry instantly, on the same laptop that is already
 running the twin. We study instant per-object semantic proxy reconstruction
 for that delta: one detection compiles into a role-labeled eight-part
-primitive actor (Semantic Primitive Proxy Assembly, SPPA-MVFit) in
+primitive actor (Semantic Primitive Proxy Assembly, SPPA) in
 \(9.4\)~ms median CPU, is emitted as a \(1.45\)~kB update descriptor, and
 updates the twin in place at telemetry bandwidth as the observation
 degrades. In preregistered evidence on
@@ -75,7 +75,7 @@ geovisualization of dynamic objects.
 \centering
 \includegraphics[width=0.95\linewidth,height=0.52\textheight,keepaspectratio]{figures/fig_hero_fastmode.png}
 \caption{The operating-point argument in one view: semantic telemetry in,
-displayable geometry out---SPPA-MVFit against six current open 3D generators
+displayable geometry out---SPPA against six current open 3D generators
 on the same inputs, each at its fastest documented official operating point
 \emph{with} its official background-removal preprocessing (exploratory; no
 3D ground truth on the real crops; full per-case provenance in RP). Columns:
@@ -157,6 +157,11 @@ cab, body/cargo region, wheels, and optional top details. A quadruped becomes a
 torso, head, and legs. A tree becomes a trunk and canopy volumes. Unknown or
 unsupported labels are not hallucinated into specific objects; they fall back to
 a generic uncertainty-aware display volume with explicit uncertainty metadata.
+The pipeline ends in a bounded multiview silhouette fitting stage that refines
+the assembled graph against calibrated top and side silhouettes; the assembly
+together with this fitting stage is the single method we call SPPA throughout
+(preregistered as SPPA-MVFit; protocol arms \texttt{sppa\_mvfit} for the full
+pipeline and \texttt{sppa\_text\_only} for the no-fit ablation).
 
 The question studied here is deliberately narrow and measurable. Position is
 assumed given---localization is a separate problem, outside this paper's
@@ -171,7 +176,7 @@ budget; only the graph changes---when both consume
 the same calibrated top and side silhouettes, and does the advantage survive
 the corrupted observations that a weak image link implies?
 
-The contribution is \textbf{family-conditioned SPPA-MVFit}: an instant
+The contribution is \textbf{family-conditioned SPPA}: an instant
 detection-to-volume path whose semantic prior is validated by a preregistered,
 equal-budget comparison showing that the family graph improves clean voxel IoU
 over a generic eight-part graph by \(0.190\) (95\% CI \([0.181,0.199]\)) on
@@ -215,7 +220,7 @@ Category-conditioned parametric templates are the closest established paradigm.
 3D morphable models fit a low-dimensional learned face prior to image
 evidence~\cite{blanz1999morphable}, and articulated body and animal models such
 as SMPL and SMAL fit a category-conditioned parametric template to scans or
-images~\cite{loper2015smpl,zuffi2017smal}. SPPA-MVFit instantiates the same
+images~\cite{loper2015smpl,zuffi2017smal}. SPPA instantiates the same
 pattern---a family-conditioned template aligned to observation evidence---with
 an eight-part primitive graph and a deliberately shared five-parameter global
 alignment. The operating point differs: SPPA targets millisecond,
@@ -255,21 +260,21 @@ becoming a node type in such a substrate, and it should be read as a display
 actor that can consume upstream occupancy evidence (OctoMap, ESDF, TSDF
 \cite{hornung2013octomap,oleynikova2017voxblox}), not as a mapping layer.
 
-Table~\ref{tab:sota-positioning} positions SPPA-MVFit against these paradigms
+Table~\ref{tab:sota-positioning} positions SPPA against these paradigms
 on the properties that matter for a telemetry-driven UAV twin. To our
 knowledge, no current paradigm simultaneously
 (i)~consumes detector-level telemetry rather than pixels or prompts,
 (ii)~emits a role-labeled low-polygon actor rather than a dense mesh or a
 category surface, (iii)~updates that actor in place at millisecond CPU cost,
 and (iv)~exposes a bounded descriptor/update contract to the renderer; each
-row of the table fails at least one of the four. SPPA-MVFit is designed for
+row of the table fails at least one of the four. SPPA is designed for
 exactly this conjunction.
 
 \begin{table}[!htb]
 \centering
 \scriptsize
 \setlength{\tabcolsep}{3pt}
-\caption{Positioning of SPPA-MVFit against state-of-the-art paradigms for
+\caption{Positioning of SPPA against state-of-the-art paradigms for
 per-object 3D in a telemetry-driven UAV digital twin. \emph{Telemetry input}:
 consumes detector tags/footprints rather than RGB or prompts. \emph{Role
 labels}: named semantic parts, not anonymous geometry. \emph{In-place update}:
@@ -410,7 +415,7 @@ implementation uses boxes, cylinders, ellipsoids, cones, and tori
 \begin{figure}[!htb]
 \centering
 \includegraphics[width=0.6\linewidth,height=0.32\textheight,keepaspectratio]{figures/fig_family_graphs_blender.png}
-\caption{The six benchmark family part graphs used by SPPA-MVFit
+\caption{The six benchmark family part graphs used by SPPA
 (\texttt{compact\_vehicle}, \texttt{articulated\_vehicle}, \texttt{quadruped},
 \texttt{branching\_vertical}, \texttt{lattice\_tower}, \texttt{rider\_cycle}):
 eight primitive slots per family with role-conditioned priors; colors denote
@@ -438,7 +443,7 @@ long truck and a short truck are not produced by globally scaling the same
 box (synthetic truck check in RP).
 
 \paragraph{Stage (5) --- Optional fit: one global five-parameter alignment.}
-When calibrated top and side silhouettes are available, SPPA-MVFit refines
+When calibrated top and side silhouettes are available, SPPA refines
 the assembled graph with a single shared parameter vector
 \(\theta=(\log s_x,\log s_y,\log s_z,s_{\mathrm{sec}},o_{\mathrm{sec}})\)
 applied to all eight slots at once, optimizing silhouette agreement over a
@@ -481,14 +486,15 @@ silhouettes (top and side). No method receives RGB pixels, detector scores,
 source parameters, ground-truth occupancy, evaluation projections, or real or
 replay telemetry. An actor is an ordered list of eight primitive slots (boxes,
 cylinders, ellipsoids). Family graphs and a single \texttt{generic} graph are
-stored as static JSON. The only builder used by text-only SPPA, Generic-MVFit,
-and SPPA-MVFit is
+stored as static JSON. The only builder used by the text-only ablation, the
+Generic graph baseline, and SPPA is
 \begin{equation}
 A = \mathrm{Build}(g,\theta),\qquad
 \theta=(\log s_x,\log s_y,\log s_z,s_{\mathrm{sec}},o_{\mathrm{sec}}),
 \end{equation}
-with identical bounds for every graph \(g\). Text-only SPPA uses the family
-graph at the default \(\theta_0\); Generic-MVFit and SPPA-MVFit optimize the
+with identical bounds for every graph \(g\). The text-only ablation (SPPA
+without the fitting stage; protocol arm \texttt{sppa\_text\_only}) uses the family
+graph at the default \(\theta_0\); the Generic graph baseline and SPPA optimize the
 same five parameters under the same objective and candidate budget, and only
 the graph identity differs (\texttt{generic} vs family). The fitting loop is
 written out exactly in Figure~\ref{alg:mvfit}. Baselines include
@@ -499,7 +505,7 @@ from the same masks.
 \centering
 \fbox{\begin{minipage}{0.88\linewidth}
 \footnotesize
-\textbf{Algorithm 1 --- SPPA-MVFit: 31-candidate silhouette fit
+\textbf{Algorithm 1 --- SPPA: 31-candidate silhouette fit
 (identical for every compared graph \(g\)).}\\[3pt]
 \textbf{Input:} graph \(g\); binary silhouettes \(S_{\mathrm{top}}\),
 \(S_{\mathrm{side}}\) (\(96{\times}96\)); metric world box.\\
@@ -520,7 +526,7 @@ evaluations for every method---the budget is part of the controlled
 comparison, not a tuned choice.
 \end{enumerate}
 \end{minipage}}
-\caption{The complete fitting loop used by SPPA-MVFit and Generic-MVFit. The
+\caption{The complete fitting loop used by SPPA and Generic graph. The
 only difference between the two methods is the graph \(g\) passed to the
 shared builder; the parameterization, bounds, objective, initialization, and
 candidate budget are identical.}
@@ -540,8 +546,8 @@ registered in writing before any measurement and are evaluated in
 Section~\ref{sec:generic-sensitivity}; the shared-authorship threat is
 discussed in Section~\ref{sec:threats}.
 
-The primary hypothesis compares clean-mask 64-cubed voxel IoU of SPPA-MVFit
-against Generic-MVFit. Analysis units are 240 source actors (20 per family in
+The primary hypothesis compares clean-mask 64-cubed voxel IoU of SPPA
+against Generic graph. Analysis units are 240 source actors (20 per family in
 each of two strata). The confirmatory estimand is the equal-stratum mean paired
 difference. H1 passes only if the lower endpoint of a two-sided 95\% stratified
 actor-bootstrap percentile interval (10{,}000 resamples, seed 77157) exceeds
@@ -629,8 +635,8 @@ if the stratified bootstrap 95\% lower bound exceeds \(+0.030\).}
 \begin{figure}[!htb]
 \centering
 \includegraphics[width=0.55\linewidth]{figures/fig_h1_by_family.png}
-\caption{Paired clean-mask mean IoU difference of SPPA-MVFit minus
-Generic-MVFit by morphology family and source stratum (\(n{=}240\)). The
+\caption{Paired clean-mask mean IoU difference of SPPA minus
+Generic graph by morphology family and source stratum (\(n{=}240\)). The
 equal-stratum aggregate is the primary estimate of
 Table~\ref{tab:mvfit-h1}.}
 \label{fig:h1-by-family}
@@ -639,7 +645,7 @@ Table~\ref{tab:mvfit-h1}.}
 \begin{table}[!htb]
 \centering
 \footnotesize
-\caption{Paired SPPA-MVFit minus Generic-MVFit mean IoU difference by
+\caption{Paired SPPA minus Generic graph mean IoU difference by
 morphology family and source stratum (preregistration \S6 obligation;
 \(n{=}20\) actors per cell). Point estimates are sealed
 (\texttt{confirmatory\_summary.json}); the per-cell 95\% CIs are NEW post-hoc
@@ -651,9 +657,9 @@ is post-hoc and not sealed.}
 \end{table}
 
 Table~\ref{tab:paired-deltas} reports the sealed paired
-differences of SPPA-MVFit against every baseline under the same stratified
+differences of SPPA against every baseline under the same stratified
 bootstrap construction (method means and wall-clock costs in
-RP). SPPA-MVFit exceeds SPPA text-only (mean
+RP). SPPA exceeds its text-only ablation (mean
 \(\Delta=0.130\), CI \([0.116,0.144]\); the preregistered
 \texttt{curated\_family\_template} row is this identical method,
 deduplicated under Amendment~01) and all lightweight geometric baselines. The margin over the
@@ -663,14 +669,14 @@ advantage over the nonsemantic visual hull~\cite{laurentini1994visual} is
 headline, and visual hull is denser occupancy geometry without a
 role-labeled lightweight actor contract, so it is not presented as a
 defeated runtime competitor. The summary statistics invert by construction:
-the hull's median (\(0.567\)) exceeds SPPA-MVFit's (\(0.563\)) while its
+the hull's median (\(0.567\)) exceeds SPPA's (\(0.563\)) while its
 mean (\(0.522\)) is lower---the paired mean
 advantage is carried by a right tail of actors where the eight-part
 contract substantially out-fits the hull. Median single-call descriptive
-SPPA-MVFit time is \(9.4\)~ms (p95 \(10.6\)~ms), below the secondary
+SPPA time is \(9.4\)~ms (p95 \(10.6\)~ms), below the secondary
 local-cost gates of 100~ms median / 250~ms p95; under the identical
-31-candidate budget the SPPA-MVFit median fit (\(9.43\)~ms) is slightly
-lower than Generic-MVFit's (\(11.34\)~ms), a wall-clock difference the
+31-candidate budget the SPPA median fit (\(9.43\)~ms) is slightly
+lower than Generic graph's (\(11.34\)~ms), a wall-clock difference the
 package records without attributing it to a single cause. A
 resolution-sensitivity check
 at grids 48/64/80 on the prespecified actor subset changes the paired
@@ -681,11 +687,13 @@ inference is H1 only (Holm-adjusted p-values in RP).
 \begin{table}[!htb]
 \centering
 \footnotesize
-\caption{Sealed paired differences of SPPA-MVFit against every baseline on
+\caption{Sealed paired differences of SPPA against every baseline on
 the held-out test (clean 64-cubed voxel IoU, \(n{=}240\), stratified
 bootstrap, 10{,}000 resamples, seed 77157; all deltas sealed in
 \texttt{confirmatory\_summary.json}). Means and medians are recomputed
-read-only from the sealed \texttt{raw\_metrics.csv}.}
+read-only from the sealed \texttt{raw\_metrics.csv}. Row labels are display
+aliases for the preregistered protocol arms \texttt{sppa\_mvfit},
+\texttt{sppa\_text\_only}, and \texttt{generic\_mvfit}.}
 \label{tab:paired-deltas}
 \input{benchmarks/results/paired\_deltas\_table.tex}
 \end{table}
@@ -727,7 +735,7 @@ all eight methods are in RP.}
 \begin{figure}[!htb]
 \centering
 \includegraphics[width=0.55\linewidth]{figures/fig_robustness_conditions.png}
-\caption{Paired SPPA-MVFit minus Generic-MVFit mean IoU difference with 95\%
+\caption{Paired SPPA minus Generic graph mean IoU difference with 95\%
 bootstrap intervals under the five prespecified observation conditions
 (\(n{=}240\) per condition). The dashed line marks the prespecified
 \(+0.030\) margin.}
@@ -739,8 +747,8 @@ threshold (voxel IoU \(<0.25\)); all five are \texttt{lattice\_tower} CSG-ID
 cases whose leg and plate thicknesses sit below the voxel cell, and every
 method scores at the floor on them---a resolution effect shared by every
 method, not a family-prior failure. Convergence telemetry supports the same
-reading: \(88.7\%\) of SPPA-MVFit cases still improve in the final sweep and
-its \(\theta\) never sits at the frozen bounds, whereas Generic-MVFit pins
+reading: \(88.7\%\) of SPPA cases still improve in the final sweep and
+its \(\theta\) never sits at the frozen bounds, whereas Generic graph pins
 \(\theta\) at a bound in \(57.9\%\) of cases---evidence of a mismatched
 prior, not of SPPA overfitting. Surface metrics agree with the volume
 ranking (Chamfer and F-score tables in RP).
@@ -769,7 +777,7 @@ held-out actor was therefore also fitted under each of the five incorrect
 family tokens (1{,}200 additional deterministic fits through the same fitting
 path; Figure~\ref{fig:wrong-family-matrix}). A wrong token is far worse than
 no family prior at all: the wrong-token mean is \(0.205\) against
-Generic-MVFit \(0.367\), a paired difference of \(-0.162\) (CI
+Generic graph \(0.367\), a paired difference of \(-0.162\) (CI
 \([-0.167,-0.158]\)), with \(98.3\%\) of actors scoring below their own
 generic fit, and even the per-actor \emph{best} wrong token (\(0.361\)) does
 not beat the generic mean. The deployed contract already routes unsupported
@@ -803,11 +811,11 @@ family's semantic class but violates its structural prior: rearward cabs,
 split cargo beds, six-legged quadrupeds, out-of-order
 platforms, a \(25^{\circ}\) leaning lattice tower, sidecar cycles, and
 over-scaled cargo. Under the identical clean-mask
-protocol, the paired SPPA advantage over Generic-MVFit falls from \(+0.209\)
+protocol, the paired SPPA advantage over Generic graph falls from \(+0.209\)
 on the same actors unviolated (i.e., the CSG-ID stratum) to \(+0.141\) (CI
 \([0.125,0.157]\)): violating
 the prior destroys about one third of the advantage
-(\(\Delta\Delta=-0.068\), CI \([-0.087,-0.048]\)) and SPPA-MVFit loses at
+(\(\Delta\Delta=-0.068\), CI \([-0.087,-0.048]\)) and SPPA loses at
 actor level in \(8.3\%\) of cases. Two violation types reach statistical
 ties with both methods near the floor---the leaning tower (\(+0.009\), CI
 \([-0.008,+0.026]\); a \(25^{\circ}\) shear is not expressible by
@@ -835,10 +843,10 @@ To operationalize what role labels are worth, a part-query task was frozen in
 writing before measurement on the same stratum: given a target role
 (\emph{cargo}, \emph{wheels}, \emph{cab}, \emph{legs}, \emph{hitch},
 \emph{platforms}), each method must return the voxels of that part. Controls
-are Generic-MVFit with its own slot mapping and two frozen visual-hull
+are the Generic graph baseline with its own slot mapping and two frozen visual-hull
 heuristics (largest connected component; lower half). Over 887 scorable
 queries (33 of 920 excluded for sub-voxel ground truth, with a sensitivity
-analysis), SPPA-MVFit reaches
+analysis), SPPA reaches
 query F1 \(0.434\) versus \(0.145\) (generic), \(0.111\) and \(0.087\) (hull
 heuristics), with normalized part-centroid error \(0.055\) versus
 \(0.177\)--\(0.249\); the hull \emph{covers} (recall \(0.96\)) but cannot
@@ -858,14 +866,14 @@ small, the class mapping approximate, and the evaluation reuses the
 synthetic-grid protocol on real geometry---a sanity check, not a benchmark.
 
 Three readings follow. First, the preregistered margin does not replicate on
-external meshes at this sample size: SPPA-MVFit scores \(0.413\) (CI
-\([0.359,0.467]\)) against Generic-MVFit \(0.370\) (CI \([0.335,0.405]\)), a
+external meshes at this sample size: SPPA scores \(0.413\) (CI
+\([0.359,0.467]\)) against Generic graph \(0.370\) (CI \([0.335,0.405]\)), a
 paired \(+0.043\) whose interval \([-0.007,+0.094]\) includes zero---at
 \(n{=}52\) the interval resolves only large effects. Second,
 the nonsemantic visual hull dominates raw occupancy with clean real
 silhouettes (\(0.656\), CI \([0.606,0.704]\)), and the trivial geometric
 primitives tell the same story: capsule (\(0.492\)), ellipsoid (\(0.485\)),
-and even the axis-aligned box (\(0.411\)) match or exceed SPPA-MVFit
+and even the axis-aligned box (\(0.411\)) match or exceed SPPA
 (\(0.413\)) here---outside the design distribution the family graph buys no
 volumetric advantage over shape-free baselines, and the value of SPPA is the
 semantic contract: role labels, bounded updates, and a telemetry-scale
@@ -882,14 +890,14 @@ contract's role is to detect that situation and degrade safely.
 \label{sec:neural-external-wave}
 
 A secondary analysis, specified in writing before any measurement, compares
-SPPA-MVFit with four measured external neural image-to-3D generators,
+SPPA with four measured external neural image-to-3D generators,
 TripoSR~\cite{tochilkin2024triposr}, Hunyuan3D-2mini-turbo and the flagship
 Hunyuan3D-2 full model~\cite{zhao2025hunyuan3d}, and
 TripoSG~\cite{triposg2025}, on sixty of the held-out cases, each under two
 inputs: a clean-crop shaded oblique render, its best condition, and the raw
 \(96\times96\) top telemetry mask, the closest visual analog of the channel
 SPPA consumes (full table, Pareto figure, and protocol in RP). On these cases
-SPPA-MVFit reaches \(0.561\) mean voxel IoU at \(9.2\)~ms CPU with a
+SPPA reaches \(0.561\) mean voxel IoU at \(9.2\)~ms CPU with a
 \(1.45\)~kB update descriptor, against \(0.128\)--\(0.231\) for the measured
 neural outputs over seven of the eight method-by-input conditions---the
 eighth, TripoSG on the raw mask (\(0.002\)), is the input-parity artifact
@@ -1000,7 +1008,7 @@ condition (RP).
 Three findings characterize the degraded-signal operating point
 (Table~\ref{tab:real-stream}; Figure~\ref{fig:real-stream}). First, the
 family prior buys 3D part structure at the cost of 2D image overlap on real
-evidence: SPPA-MVFit does \emph{not} win the reprojection metric on this
+evidence: SPPA does \emph{not} win the reprojection metric on this
 stream (\(0.298\)
 median versus \(0.33\)--\(0.45\) across the nonsemantic baselines), because the monocular
 height estimate conflicts with the prior bounds (a \(13.75\)~m tower column
@@ -1061,15 +1069,15 @@ detection evidence only, not metric accuracy.
 with a real custom detector, real telemetry, and exact tower-anchor ground
 truth. Localization
 and footprint columns (GT-matched subset, \(n{=}217\)) are retained in RP.
-SPPA-MVFit trades 2D image
+SPPA trades 2D image
 overlap for 3D part structure (the stream has no 3D ground truth).}
 \label{tab:real-stream}
 \begin{tabular}{@{}lcc@{}}
 \toprule
 Method & 2D reproj. IoU med. [P25, P75] & Latency (ms) \\
 \midrule
-SPPA-MVFit (this work) & 0.298 [0.218, 0.392] & 11.8 \\
-Generic-MVFit & 0.423 [0.394, 0.448] & 13.4 \\
+SPPA (this work) & 0.298 [0.218, 0.392] & 11.8 \\
+Generic graph & 0.423 [0.394, 0.448] & 13.4 \\
 OBB & 0.446 [0.398, 0.492] & 0.22 \\
 AABB & 0.330 [0.299, 0.357] & 0.25 \\
 Visual hull (non-semantic) & 0.446 [0.398, 0.493] & 0.50 \\
@@ -1085,7 +1093,7 @@ Capsule & 0.445 [0.422, 0.466] & 1.31 \\
 (tower crop) with
 detector boxes and exact ground-truth anchors reprojected through the same
 camera model. (b)~2D reprojection IoU against the real image evidence, by
-detector class: SPPA-MVFit does not win this 2D metric; the family prior
+detector class: SPPA does not win this 2D metric; the family prior
 buys 3D part structure instead.}
 \label{fig:real-stream}
 \end{figure}
@@ -1189,7 +1197,7 @@ paper contains none.
 
 \section{Conclusion}
 
-SPPA-MVFit targets the moment a UAV digital twin must be updated under a
+SPPA targets the moment a UAV digital twin must be updated under a
 weak signal: the static layer is stale, the image link does not
 suffice, and the detections that do arrive must become explicit per-object
 volumes at once. This paper has shown that a reviewed semantic part graph is
@@ -1218,7 +1226,7 @@ and, only if claimed, operator studies.
 \section*{Data and Code Availability}
 
 {\sloppy
-The SPPA-MVFit reproducibility package (preregistration,
+The SPPA reproducibility package (preregistration,
 amendment log, NIST-beacon seed manifest, freeze
 records, full secondary tables, reproduction commands
 (\texttt{reproduce\_sppa\_mvfit\_paper.py -{}-strict} \(\to\) 0 blockers),
