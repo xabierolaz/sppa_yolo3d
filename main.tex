@@ -417,7 +417,7 @@ parameters, and emit the versioned descriptor consumed once
 per track by the renderer. The detector/image path inserts four evidence
 stages before the same builder: (1)~\textbf{Observe}---detector label,
 confidence, bbox, and native mask polygon are stored in a
-\texttt{SPPA-OBS-0.1} record with declared camera/flight geometry and an
+versioned observation record with declared camera/flight geometry and an
 uncertainty envelope; (2)~\textbf{Project}---the mask polygon
 is projected through the declared camera model into an oriented ground
 footprint; (3)~\textbf{Scale}---with declared metric calibration the
