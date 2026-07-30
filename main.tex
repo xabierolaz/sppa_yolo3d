@@ -512,9 +512,9 @@ structures that violate the family prior degrade in identifiable zones
 \paragraph{Stage (6) --- Twin update: descriptor, pose, and lifecycle.}
 \label{sec:implementation}
 {\sloppy
-A \texttt{SPPA-DESC-0.2} record carries the resolved family, the role-labeled
+A versioned descriptor record carries the resolved family, the role-labeled
 part list, and the evidence, uncertainty, and material tags needed to build
-the actor once per track; a \texttt{SPPA-UPD-0.2} record separates
+the actor once per track; a companion update record separates
 create/regenerate payloads from the pose/no-op/shape updates applied in place
 (field-level contents and the \texttt{descriptor\_id}
 topology-cache identity rule in RP). The
