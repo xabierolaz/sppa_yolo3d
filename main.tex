@@ -1248,17 +1248,24 @@ its measured operational signal is token validation (AUC \(0.847\)
 claim).
 \end{itemize}
 
-Within these boundaries the supported claim is narrow: family conditioning
+The supported claim is deliberately narrow, and we treat that narrowness as
+the design principle rather than an apology: family conditioning
 improves occupancy beyond the prespecified margin on the held-out synthetic
-test, and SPPA descriptors are consumable by an optional Unreal backend;
+test, SPPA descriptors are consumable by an optional Unreal backend, and the
+trust envelope around the prior is itself measured;
 real-UAV accuracy, universal open-set geometry, operator benefit, and neural
-image-to-3D ranking remain outside the claim.
-Four directions are left to future work. First, the frozen coordinate-descent
+image-to-3D ranking remain outside the claim---each excluded because the
+evidence presented here does not measure it, and each convertible into a
+claim only by the experiments below.
+Four directions are left to future work, each tied to a gap this paper
+measured rather than to generic outlook. First, the frozen coordinate-descent
 fitter could be replaced by population-based or differentiable-rendering
 fitting, or amortized by a small learned
 mask-to-\(\theta\) predictor, keeping the representation and contract. Second, the external gap measured
-here calls for public real-data tests with metric ground truth and
-detector-derived silhouettes. Third, the
+here---non-replication on 52 real meshes, the inverted 2D metric on the real
+stream---calls for public real-data tests with metric ground truth and
+detector-derived silhouettes; we consider this the single most valuable
+experiment the community could run against this work. Third, the
 open-set coverage of the reviewed family library should be climbed beyond
 string matching:
 an embedding-based label router, per-part bounded
