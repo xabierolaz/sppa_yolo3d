@@ -129,6 +129,22 @@ Unreal/Cesium 3D Tiles twin. That architectural choice creates a rendering
 problem that is separate from the flight system itself: object-level telemetry
 is not a mesh.
 
+\paragraph{Scope of this paper.} We isolate exactly that rendering layer, and
+we state its boundaries before the method, not after it. \emph{Localization
+is assumed given}: position estimation is a separate problem solved by the
+companion pipeline, whose end-to-end detector-to-twin georeferencing error
+was measured at \(4\)--\(5\)~m for targets at \(40\)--\(130\)~m range, so
+the actors studied here are awareness-grade volumes, not maneuvering-grade
+survey. \emph{The camera is the validated sensor}: LiDAR and night, fog, or
+smoke operation are evaluated only through synthetic corruptions and
+simulated demonstrations, not hardware measurements. \emph{The confirmatory
+domain is synthetic}: real data enters as boundary evidence and operational
+case study, not as the confirmatory test. \emph{No operator benefit is
+claimed}: the twin is the delivery substrate, and human-factors validation
+is future work. What remains inside the claim is, we argue, the load-bearing
+piece: what should be drawn, per detection, inside the twin, at what cost,
+and with what measured operating envelope.
+
 Object-level telemetry is, however, dramatically cheaper to move than the
 imagery it replaces. In a recorded-flight replay of our companion telemetry
 pipeline, the semantic object stream normalized to \(1.67\)~Mbps against
