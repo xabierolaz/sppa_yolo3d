@@ -1088,25 +1088,32 @@ first finding into a measured routing decision. Localization is outside this
 paper's scope: all methods share the same \(\approx\)\(33\)~m median 3D
 error, set by the monocular observation geometry (full analysis in RP).
 
-\paragraph{Token validation (post-hoc).}
+\paragraph{Token validation and trust-gated routing (post-hoc).}
 The same stream provides a measured token-validation signal (protocol frozen
 before any outcome; ROC in RP):
 on the 217 GT-matched cases,
 \(-\)confidence separates the 138 wrong-token from the 79 correct-token cases
-with AUC \(0.847\) (95\% CI \([0.792,0.898]\)), and prior mismatch separates
-them perfectly (AUC \(1.000\)), in
-the direction opposite to intuition: the
+with AUC \(0.847\) (95\% CI \([0.792,0.898]\)). Prior mismatch separates
+them perfectly on this stream (AUC \(1.000\))---we flag this number rather
+than celebrate it: it arises in the direction opposite to intuition, because
 cow/biker hallucinations receive small monocular heights that fit their
-wrong family priors suspiciously well, while true towers suffer severe
+wrong family priors suspiciously well while true towers suffer severe
 monocular height underestimation
-(\(\approx\)\(5\)~m observed against a \(25\)~m prior)---a no-observed-overlap result, not a
-population claim. A frozen routing policy on these signals
+(\(\approx\)\(5\)~m observed against a \(25\)~m prior). With \emph{no
+observed overlap} between groups, this is a stream-specific artifact of one
+detector's failure mode, not a population claim, and we do not expect it to
+transfer; the \(0.847\) confidence signal is the transferable one. A frozen
+routing policy on these signals
 (registered 2026-07-19 before any outcome; RP) turns the signal into a
-measured coverage decision:
+measured coverage decision---and this policy, not the raw fit, is the
+section's operational result:
 routing detections below confidence \(0.34\) to the nonsemantic proxy
 fallback lifts the stream-level median 2D IoU from
 \(0.298\) (always-SPPA) to \(0.432\) (\([0.427,0.435]\)) while still
 compiling the \(19\%\) most confident detections into family proxies.
+Family conditioning and shape-free fallback are thus not competitors but a
+single gated system: commit the semantic prior where it is trusted, degrade
+gracefully where it is not.
 
 \paragraph{A first real-video pass (exploratory post-hoc).}
 A 23.9-s segment of real onboard flight video (239 frames at 10~Hz, cut by
