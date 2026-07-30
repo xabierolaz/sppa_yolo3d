@@ -1176,18 +1176,24 @@ representation rather than to the fitter. The margin holds under
 every preregistered observation corruption, although the degraded-sensing
 evidence combines synthetic corruptions, simulated demonstrations, and one
 recorded stream---no hardware measurement of
-degraded operation exists. The boundary analyses are as informative as the headline:
-a wrong family token is worse than no prior at all, making fallback routing
-a measured requirement;
+degraded operation exists. Read together, the evidence supports a sharper
+thesis than the headline alone: \textbf{a family-conditioned prior is an
+asset only inside a measured trust envelope, and the envelope is as much the
+contribution as the prior.} The boundary analyses define that envelope: a
+wrong family token is worse than no prior at all, making fallback routing a
+measured requirement;
 adversarial violations of the structural prior destroy a measurable share of
-the advantage; and on external real meshes the margin does not
+the advantage; on external real meshes the margin does not
 replicate at this sample size, where what remains differentiating is the
 contract---role labels, bounded updates, and a telemetry-scale payload, with
 the part-query value that dense occupancy baselines cannot
-select---rather than volumetric leadership. The real detector stream
-exercises the same regime end to end within its latency budget, with
-detector-token confidence and prior fit as measured validation signals for
-accepting, refining, or rejecting a family token; two further exploratory
+select---rather than volumetric leadership; and on the real detector stream
+the prior loses the 2D metric outright while the trust-gated routing policy
+recovers the stream-level operating point (\(0.298\to0.432\) median 2D IoU).
+A twin layer that knows when \emph{not} to use its own prior is the system
+property we argue the dynamic-object literature is missing; the measured
+signals that gate it (detector-token confidence and prior fit) are provided
+by this paper; two further exploratory
 simulated-twin studies
 (cross-view reconstruction fidelity and camera-less simulated-LiDAR sensing)
 are retained in RP.
