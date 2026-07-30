@@ -30,41 +30,43 @@ Family-Conditioned Part Graphs at Telemetry Bandwidth (SPPA)}
 \maketitle
 
 \begin{abstract}
-Remote UAV piloting beyond visual line of sight increasingly relies on a
-geospatial digital twin: the operator flies from a ground station that
-renders an Unreal/Cesium 3D Tiles twin---potentially through an immersive VR
-headset---because a live video feed cannot be trusted as the sole visual
-channel. Link bandwidth, latency, and visibility degrade with distance,
-weather, and darkness, and night or low-visibility operation removes the
-camera as a primary sensor altogether. The twin survives those conditions,
-but it is stale: the operationally critical delta---a new or relocated
-tower, vehicles, people,
-animals near the flight path---is exactly what the static layer cannot
-contain. Object-level semantic telemetry (detector tags, tracks, footprints,
-and aircraft pose) is orders of magnitude cheaper to downlink than video, so
-the twin can be kept current if---and only if---each detection can be turned
-into displayable 3D geometry instantly, on the same laptop that is already
-running the twin. We study instant per-object semantic proxy reconstruction
-for that delta: one detection compiles into a role-labeled eight-part
-primitive actor (Semantic Primitive Proxy Assembly, SPPA) in
-\(9.4\)~ms median CPU, is emitted as a \(1.45\)~kB update descriptor, and
-updates the twin in place at telemetry bandwidth as the observation
-degrades. In preregistered evidence on
-240 held-out synthetic
-actors, the family-conditioned graph improves
+Live geospatial digital twins fail in a specific way: the streamed static
+layer shows the field as it was, not as it is, and the operationally
+critical delta---a new or relocated tower, vehicles, people, animals near
+the flight path---is exactly what it cannot contain. A video downlink cannot
+close that gap when bandwidth, latency, weather, or darkness degrade it;
+object-level semantic telemetry (detector tags, tracks, footprints, aircraft
+pose) is orders of magnitude cheaper to move, but only pays off if each
+detection becomes displayable 3D geometry instantly, on the same machine
+already running the twin. This paper specifies and validates that missing
+display layer, with explicit scope: we address per-object reconstruction and
+update from semantic telemetry; localization is assumed given (the companion
+pipeline measures \(4\)--\(5\)~m end-to-end georeferencing error, so actors
+are awareness-grade volumes, not maneuvering-grade survey); the camera is
+the validated sensor; and no operator study is claimed. The Semantic
+Primitive Proxy Assembly (SPPA) compiles one detection into a role-labeled
+eight-part primitive actor in \(9.4\)~ms median CPU, emitted as a
+\(1.45\)~kB update descriptor that updates the twin in place. Three results
+bound what the approach is worth. First, preregistered confirmatory evidence
+on 240 held-out synthetic actors: the family-conditioned graph improves
 clean voxel IoU over an equal-budget generic graph by \(0.190\) (95\% CI
-\([0.181,0.199]\)), and the margin holds under every prespecified
-observation corruption. Boundary arms map where the prior stops: a
-wrong family token is worse than none, adversarial instances that violate
-the structural prior destroy one third of the advantage, and the margin
-does not replicate on external real meshes (\(n{=}52\)). A case study on
-a recorded real detector stream (1{,}902 detections, 2--15~Hz) exercises
-the same operating point end to end at \(11.8\)~ms median per detection,
-and detector-token confidence plus prior fit flag wrong tokens (AUC
-\(0.847\) \([0.792,0.898]\) on 217 matched cases). Operation is
-camera-validated: LiDAR and night/fog/smoke are evaluated only through
-synthetic corruptions and simulated demonstrations; position is assumed
-given.
+\([0.181,0.199]\)), the margin holds under every prespecified observation
+corruption, and the decomposition attributes the advantage to the
+representation, not the fitter. Second, a measured operating envelope: a
+wrong family token is worse than none (\(-0.162\)), prior-violating
+instances destroy one third of the advantage, and the margin does not
+replicate on 52 external real meshes---outside the design distribution the
+differentiator is the semantic contract (role labels, bounded in-place
+updates, part-query F1 \(0.434\)), not volumetric leadership. Third, on a
+recorded real detector stream (1{,}902 detections, 2--15~Hz) SPPA fits at
+\(11.8\)~ms median but does \emph{not} win 2D reprojection overlap against
+shape-free baselines; the stream's operational payoff is instead a measured
+trust signal---detector confidence plus prior fit (AUC \(0.847\)
+\([0.792,0.898]\) on 217 matched cases)---whose frozen routing policy lifts
+stream-level median 2D IoU from \(0.298\) to \(0.432\) while committing only
+the \(19\%\) most confident detections to family proxies. Degraded sensing
+beyond the camera (LiDAR, night, fog, smoke) is evaluated only through
+synthetic corruptions and simulated demonstrations.
 \end{abstract}
 
 \noindent\textbf{Keywords:} semantic 3D proxy; multiview silhouette fitting;
