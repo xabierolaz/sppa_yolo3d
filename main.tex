@@ -1018,7 +1018,11 @@ replay at 100 synthetic objects passes a
 33.3~ms desktop frame budget but misses 60~FPS; dense shape updates remain the
 limiting factor even under HISM batching, and curated assets remain preferable
 when a matched asset exists (shape-stream P95 \(6.789\)~ms vs.\ \(22.445\)~ms
-on the cow/tower subset).
+on the cow/tower subset). The deployment claim is therefore scoped to the
+regime the mission actually presents---sparse field scenes with tens of
+concurrent dynamic objects, 30~FPS-class rendering---not to dense urban
+object counts: at 500 densely updated objects the HISM shape path exceeds the
+frame budget by more than five times (Table~\ref{tab:deployment-runtime-summary}).
 
 \begin{table}[!htb]
 \centering
