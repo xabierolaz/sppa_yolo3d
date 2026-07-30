@@ -191,28 +191,25 @@ together with this fitting stage is the single method we call SPPA throughout
 (preregistered as SPPA-MVFit; protocol arms \texttt{sppa\_mvfit} for the full
 pipeline and \texttt{sppa\_text\_only} for the no-fit ablation).
 
-The question studied here is deliberately narrow and measurable. Position is
-assumed given---localization is a separate problem, outside this paper's
-scope; in the companion replay the end-to-end detector-to-twin
-georeferencing error was measured at \(4\)--\(5\)~m for targets at
-\(40\)--\(130\)~m range, so the reconstructed actors are
-awareness-grade volumes, not maneuvering-grade survey---and what the mission
-requires is reconstruction fidelity under degraded sensing: does a frozen semantic-family part graph improve lightweight
-3D occupancy relative to an input-matched, equal-budget nonsemantic
-graph---identical silhouettes, optimizer, parameter count, and candidate
-budget; only the graph changes---when both consume
-the same calibrated top and side silhouettes, and does the advantage survive
-the corrupted observations that a weak image link implies?
+The question studied here is deliberately narrow and measurable. Within the
+scope declared above, what the mission requires is reconstruction fidelity
+under a weak signal: does a frozen semantic-family part graph improve
+lightweight 3D occupancy relative to an input-matched, equal-budget
+nonsemantic graph---identical silhouettes, optimizer, parameter count, and
+candidate budget; only the graph changes---when both consume the same
+calibrated top and side silhouettes, does the advantage survive the
+corrupted observations that a weak image link implies, and can the system
+itself measure when its prior should not be trusted?
 
 The contribution is \textbf{family-conditioned SPPA}: an instant
-detection-to-volume path whose semantic prior is validated by a preregistered,
-equal-budget comparison showing that the family graph improves clean voxel IoU
-over a generic eight-part graph by \(0.190\) (95\% CI \([0.181,0.199]\)) on
-240
-held-out synthetic actors, together with boundary analyses that map where the
-prior helps, where it hurts, and where it stops transferring. The optimizer is
-deliberately a shared five-parameter global alignment and is not claimed as a
-novel fitting algorithm.
+detection-to-volume path whose semantic prior is validated by a
+preregistered, equal-budget comparison showing that the family graph
+improves clean voxel IoU over a generic eight-part graph by \(0.190\) (95\%
+CI \([0.181,0.199]\)) on 240 held-out synthetic actors, together with a
+measured operating envelope that maps where the prior helps, where it hurts,
+and where it stops transferring. The optimizer is deliberately a shared
+five-parameter global alignment and is not claimed as a novel fitting
+algorithm.
 Concretely, the paper contributes: (i)~an instant detection-to-volume
 path---a reviewed family recipe compiles one detection into a role-labeled
 eight-part actor in \(9.4\)~ms median CPU per object, emitted as a compact
@@ -222,10 +219,16 @@ fidelity and of robustness to a weak signal---the advantage
 is maintained under all prespecified mask and morphology
 corruptions, and the frontier where it stops is measured (wrong-family
 tokens, adversarial family instances, external real meshes, and a real
-detector stream); and (iii)~the twin-delta update contract---role labels,
+detector stream); (iii)~the twin-delta update contract---role labels,
 bounded in-place updates, telemetry-scale JSON update traffic, and an
 operational part-query
-value (F1 \(0.434\))---with its declared limits.
+value (F1 \(0.434\))---with its declared limits; and (iv)~a measured
+trust-gating policy for the contract itself: on the real stream, detector
+confidence plus prior fit separate wrong from correct family tokens (AUC
+\(0.847\), 95\% CI \([0.792,0.898]\)), and a frozen routing rule lifts
+stream-level median 2D IoU from \(0.298\) to \(0.432\) by committing only
+the \(19\%\) most confident detections to family proxies---the operating
+pattern we argue every family-conditioned twin layer needs.
 
 \section{Related Work}
 
