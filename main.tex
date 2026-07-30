@@ -232,6 +232,29 @@ pattern we argue every family-conditioned twin layer needs.
 
 \section{Related Work}
 
+\paragraph{Geospatial digital twins and dynamic object layers.}
+Semantic 3D city models provide the static substrate: CityGML and CityJSON
+structure city objects with semantics and levels of
+detail~\cite{ledoux2019cityjson,biljecki2015applications}, and digital-twin
+reviews identify live, sensor-fed object layers---not the static model---as
+the open technical gap~\cite{ketzler2020digitaltwins,batty2018digitaltwins}.
+For moving or temporary objects, geovisual analytics of movement analyzes
+trajectories and events~\cite{andrienko2013movement}, but the per-object
+volumetric primitive a 3D twin should \emph{draw} from sparse detections is
+largely unspecified. A parallel GIScience literature establishes that
+uncertainty in spatial displays must be designed, not
+improvised~\cite{maceachren2005visualizing}; SPPA adopts this as contract
+requirements---every actor carries role-labeled uncertainty metadata, an
+explicit \texttt{yaw\_ambiguous} flag, and a conservative fallback volume
+rather than a hallucinated object. Finally, UAV photogrammetry quantifies
+the observation regime behind our error modes: nadir and oblique airborne
+views constrain footprint geometry well but recover height poorly from
+monocular evidence~\cite{nex2014uav}---exactly the evidence-versus-prior
+tension the real stream of Section~\ref{sec:real-stream} measures. SPPA is,
+to our knowledge, the first attempt to give the dynamic object layer of a
+UAV geospatial twin an explicit, bounded, telemetry-driven volumetric
+contract.
+
 Text-to-3D and image-to-3D generators target visual asset fidelity from prompts
 or images
 \cite{poole2022dreamfusion,lin2022magic3d,nichol2022pointe,tochilkin2024triposr,sf3d2024,stability2025spar3d,triposg2025,xu2024instantmesh,xiang2024trellis,xiang2025trellis2,zhao2025hunyuan3d}.
