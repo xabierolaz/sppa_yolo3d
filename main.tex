@@ -1279,25 +1279,33 @@ paper contains none.
 SPPA targets the moment a UAV digital twin must be updated under a
 weak signal: the static layer is stale, the image link does not
 suffice, and the detections that do arrive must become explicit per-object
-volumes at once. This paper has shown that a reviewed semantic part graph is
-a measurable occupancy prior for that reconstruction: the
+volumes at once. This paper has shown three things about that moment. First,
+a reviewed semantic part graph is a measurable occupancy prior: the
 preregistered equal-budget comparison passes its prespecified margin and
-holds under every preregistered corruption, and the decomposition attributes most of the
-advantage to the representation rather than the fitter. The
-same contract works where it was built to work---on a recorded real detector
-stream it fits inside the stream's latency budget and provides measured
-token-validation signals, and on two real flight
+holds under every preregistered corruption, and the decomposition attributes
+most of the advantage to the representation rather than to the fitter. Second, the
+contract works where it was built to work---on a recorded real detector
+stream it fits inside the stream's latency budget, and on two real flight
 photos it compiles the detection end to end while
 the measured neural generators return no surface or amorphous blobs at GPU
-cost---and its boundary is measured with
-equal care: a wrong family token is worse
-than none, adversarial violations destroy part of the advantage, and the
+cost. Third---and, we argue, most durably---the
+prior's boundary is measured with the same rigor as its headline: a wrong
+family token is worse
+than none, adversarial violations destroy part of the advantage, the
 margin does not replicate on external meshes at
-this sample size, so the contract routes, refines, or falls back rather
-than hallucinating. The durable contribution is the twin-delta update
-contract: family-conditioned roles, bounded in-place updates, a compact
+this sample size, and on the real stream the prior loses the 2D metric
+outright---so the deployed system must route, refine, or fall back rather
+than commit. The contribution is therefore not only the twin-delta update
+contract (family-conditioned roles, bounded in-place updates, a compact
 update descriptor at telemetry-scale traffic, and a measured part-query
-value. Operation is camera-validated today and position is assumed given;
+value) but the trust-gated pattern that makes the contract safe to deploy:
+confidence and prior fit as measured gate signals, and a frozen routing
+policy that recovers the stream-level operating point
+(\(0.298\to0.432\) median 2D IoU) by committing the semantic prior only
+where it is trusted. We offer this pattern---semantic prior plus measured
+envelope plus graceful fallback---as a reference design for the dynamic
+object layers that geospatial digital twins currently lack. Operation is
+camera-validated today and position is assumed given;
 the next steps are
 external public data with metric ground truth, detector-derived silhouettes,
 and, only if claimed, operator studies.
