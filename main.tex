@@ -20,7 +20,11 @@
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
 
+<<<<<<< Updated upstream
 \title{Real time Semantic Proxy Reconstruction for UAV Digital Twins:\\
+=======
+\title{Real-Time Semantic Proxy Reconstruction for UAV Digital Twins:\\
+>>>>>>> Stashed changes
 Family-Conditioned Part Graphs at Telemetry Bandwidth (SPPA)}
 \author{Authors omitted for review}
 \date{}
@@ -36,9 +40,10 @@ critical delta---a new or relocated tower, vehicles, people, animals near
 the flight path---is exactly what it cannot contain. A video downlink cannot
 close that gap when bandwidth, latency, weather, or darkness degrade it;
 object-level semantic telemetry (detector tags, tracks, footprints, aircraft
-pose) is orders of magnitude cheaper to move, but only pays off if each
-detection becomes displayable 3D geometry instantly, on the same machine
-already running the twin. This paper specifies and validates that missing
+pose) is cheaper to move by a factor of three to six at stream level---and by
+about two orders of magnitude for per-object update messages---but only pays
+off if each detection becomes displayable 3D geometry in real time, on the
+same machine already running the twin. This paper specifies and validates that missing
 display layer, with explicit scope: we address per-object reconstruction and
 update from semantic telemetry; localization is assumed given (the companion
 pipeline measures \(4\)--\(5\)~m end-to-end georeferencing error, so actors
@@ -133,7 +138,8 @@ is not a mesh.
 we state its boundaries before the method, not after it. \emph{Localization
 is assumed given}: position estimation is a separate problem solved by the
 companion pipeline, whose end-to-end detector-to-twin georeferencing error
-was measured at \(4\)--\(5\)~m for targets at \(40\)--\(130\)~m range, so
+was measured at \(4\)--\(5\)~m for targets at \(40\)--\(130\)~m range (companion
+manuscript, under review; anonymized for double-anonymous review), so
 the actors studied here are awareness-grade volumes, not maneuvering-grade
 survey. \emph{The camera is the validated sensor}: LiDAR and night, fog, or
 smoke operation are evaluated only through synthetic corruptions and
@@ -153,7 +159,7 @@ flight video---\(84.0\)\% and \(70.4\)\% lower---and the per-object update
 messages measured in this paper amount to \(25.8\)--\(37.4\)~kB/s of JSON
 traffic. Detection, georeferencing, and the actor lifecycle that deliver
 those messages to the
-twin are validated end to end in a companion manuscript; the
+twin are validated end to end in the same companion manuscript; the
 present paper isolates the layer that pipeline lacks: what should be drawn,
 per detection, inside the twin.
 
@@ -201,7 +207,7 @@ calibrated top and side silhouettes, does the advantage survive the
 corrupted observations that a weak image link implies, and can the system
 itself measure when its prior should not be trusted?
 
-The contribution is \textbf{family-conditioned SPPA}: an instant
+The contribution is \textbf{family-conditioned SPPA}: a real-time
 detection-to-volume path whose semantic prior is validated by a
 preregistered, equal-budget comparison showing that the family graph
 improves clean voxel IoU over a generic eight-part graph by \(0.190\) (95\%
@@ -210,7 +216,7 @@ measured operating envelope that maps where the prior helps, where it hurts,
 and where it stops transferring. The optimizer is deliberately a shared
 five-parameter global alignment and is not claimed as a novel fitting
 algorithm.
-Concretely, the paper contributes: (i)~an instant detection-to-volume
+Concretely, the paper contributes: (i)~a real-time detection-to-volume
 path---a reviewed family recipe compiles one detection into a role-labeled
 eight-part actor in \(9.4\)~ms median CPU per object, emitted as a compact
 \(1.45\)~kB update descriptor, and sustains \(11.8\)~ms median per detection
@@ -341,7 +347,7 @@ Paradigm (representative systems) & Telemetry input & Role labels & In-place upd
 \midrule
 Neural image/text-to-3D (TripoSR, SF3D, SPAR3D, Hunyuan3D-2, TripoSG, TRELLIS.2) & no (image/prompt) & no & no & 0.08--46~s GPU; 1.6k--3.4M tris; 2--16~GB VRAM \\
 Category templates (3DMM, SMPL, SMAL) & no (scans/images) & category-specific & partial & offline fitting \\
-Learned primitive decomposition (SuperDec, DualPrim, superfrusta) & no (image/cloud) & implicit parts & no & GPU inference \\
+Learned primitive decomposition (SuperDec~\cite{fedele2025superdec}, DualPrim~\cite{meng2026dualprim}, superfrusta~\cite{ganeshan2026superfrusta}) & no (image/cloud) & implicit parts & no & GPU inference \\
 Scene graphs (Hydra, 3D DSG) & mapping sensors & object level & yes & mapping layer, not a display actor \\
 LOD / impostors / billboards & no (needs assets) & no & yes & negligible, but asset required \\
 Occupancy maps (OctoMap, voxblox) & depth sensors & no & yes & navigation map, not actors \\
@@ -375,8 +381,8 @@ three cases: an \texttt{exact\_class} label with a fixed archetype; a
 \texttt{keyword\_archetype} mapping of an out-of-template label to a finite
 reviewed archetype, such as vehicle or vertical structure; or a
 \texttt{fallback\_unknown\_label} rendered as a generic uncertainty-aware
-volume. The versioned recipe manifest covers 23 archetypes and 95 exact or
-keyword labels; SPPA can accept an open detector tag at runtime, but the tag is
+volume. The versioned recipe manifest (ONTOLOGY-0.4) routes detector labels into a
+finite set of reviewed archetypes; SPPA can accept an open detector tag at runtime, but the tag is
 normalized into a reviewed family or a conservative unknown fallback before
 geometry is emitted. An adversarial resolver audit over 12 compound or
 misleading labels is included
@@ -468,12 +474,13 @@ implementation uses boxes, cylinders, ellipsoids, cones, and tori
 
 \begin{figure}[!htb]
 \centering
-\includegraphics[width=0.6\linewidth,height=0.32\textheight,keepaspectratio]{figures/fig_family_graphs_blender.png}
-\caption{The six benchmark family part graphs used by SPPA
-(\texttt{compact\_vehicle}, \texttt{articulated\_vehicle}, \texttt{quadruped},
-\texttt{branching\_vertical}, \texttt{lattice\_tower}, \texttt{rider\_cycle}):
-eight primitive slots per family with role-conditioned priors; colors denote
-semantic roles.}
+\includegraphics[width=0.95\linewidth,height=0.5\textheight,keepaspectratio]{figures/fig_family_graphs_blender.png}
+\caption{The six benchmark family part graphs used by SPPA, panels (a)--(f):
+\texttt{compact\_vehicle}, \texttt{articulated\_vehicle}, \texttt{quadruped},
+\texttt{branching\_vertical}, \texttt{lattice\_tower}, \texttt{rider\_cycle}.
+Eight primitive slots per family with role-conditioned priors (individual
+slots may be degenerate or occluded in a given view); colors denote
+semantic roles (bottom legend).}
 \label{fig:family-graphs}
 \end{figure}
 
@@ -486,9 +493,10 @@ count, carrying which role is \emph{knowledge}---authored offline, reviewed,
 regression-tested, and frozen in the recipe; each part's instance position
 and scale is \emph{computation}---derived in real time from the
 evidence-driven dimensions through role coefficients clamped to declared
-ranges (the full anatomy table is in RP). The count is the smallest set that
-covers the family's occupancy modes---alternative decompositions were
-measured and rejected (Section~\ref{sec:generic-sensitivity}).
+ranges (the full anatomy table is in RP). The slot count is fixed at eight by the shared actor interface, so that
+every graph---family or generic---competes at equal capacity; alternative
+generic-graph designs at that count were registered in writing and measured
+(Section~\ref{sec:generic-sensitivity}).
 
 Vehicle adaptation is the clearest implemented case: in the current
 vehicle grammar, cab and wheel dimensions remain bounded by role priors,
@@ -500,7 +508,10 @@ box (synthetic truck check in RP).
 When calibrated top and side silhouettes are available, SPPA refines
 the assembled graph with a single shared parameter vector
 \(\theta=(\log s_x,\log s_y,\log s_z,s_{\mathrm{sec}},o_{\mathrm{sec}})\)
-applied to all eight slots at once, optimizing silhouette agreement over a
+applied to all eight slots at once---\(s_{\mathrm{sec}}\) is a uniform scale
+multiplier on the slots flagged \texttt{secondary} in the graph (e.g.,
+limbs, wheels) and \(o_{\mathrm{sec}}\) an x-axis translation of those slots
+as a fraction of the graph's default extent---, optimizing silhouette agreement over a
 fixed 31-candidate budget (the exact loop is
 Algorithm~1 of Section~\ref{sec:mvfit}). The fit is deliberately global: it
 scales and spans the assembled family graph as one object and never moves
@@ -538,8 +549,9 @@ Every compared method receives the same case identifier, morphology-family
 token, metric world box, and two \(96\times 96\) orthographic binary
 silhouettes (top and side). No method receives RGB pixels, detector scores,
 source parameters, ground-truth occupancy, evaluation projections, or real or
-replay telemetry. An actor is an ordered list of eight primitive slots (boxes,
-cylinders, ellipsoids). Family graphs and a single \texttt{generic} graph are
+replay telemetry. An actor is an ordered list of eight primitive slots; the benchmark
+instantiates the box/cylinder/ellipsoid subset of the implementation's
+primitive types. Family graphs and a single \texttt{generic} graph are
 stored as static JSON. The only builder used by the text-only ablation, the
 Generic graph baseline, and SPPA is
 \begin{equation}
@@ -566,8 +578,11 @@ from the same masks.
 \textbf{Parameters:} \(\theta=(\log s_x,\log s_y,\log s_z,s_{\mathrm{sec}},
 o_{\mathrm{sec}})\), shared by all eight slots.\\
 \textbf{Objective:} \(J(\theta)=0.5\,(1-\mathrm{IoU}_{\mathrm{top}})
-+0.5\,(1-\mathrm{IoU}_{\mathrm{side}})+\varepsilon\cdot\)centering,
-evaluated on the actor's projections against the observed silhouettes.\\[2pt]
++0.5\,(1-\mathrm{IoU}_{\mathrm{side}})+R(\theta)\), with the Tikhonov
+regularizer \(R(\theta)=0.01\sum_{i=1}^{3}(\log s_i)^2
++0.005\,(s_{\mathrm{sec}}-1)^2+0.005\,o_{\mathrm{sec}}^2\) keeping the fit
+near the recipe prior, evaluated on the actor's projections against the
+observed silhouettes.\\[2pt]
 \begin{enumerate}[leftmargin=1.6em,itemsep=0pt,topsep=1pt]
 \item Initialize \(\theta_0\) from the observed mask extents; evaluate
 \(J(\theta_0)\) \hfill(1 evaluation)
@@ -607,14 +622,17 @@ difference. H1 passes only if the lower endpoint of a two-sided 95\% stratified
 actor-bootstrap percentile interval (10{,}000 resamples, seed 77157) exceeds
 \(+0.030\). The margin and the power analysis behind the sample size were fixed
 before evaluation: with paired-difference SD \(0.12\), \(n{=}240\) actors give
-approximately 90\% normal-approximation power to distinguish a true mean of
+approximately 94\% normal-approximation power to distinguish a true mean of
 \(+0.055\) from the \(+0.030\) margin. The full protocol was preregistered
 and sealed before evaluation; the seed provenance, amendment log, and freeze
-records are given in RP. Two amendments to the sealed
-protocol are disclosed: Amendment~03 substituted the planned external review
+records are given in RP. All amendments to the sealed
+protocol are logged in RP; the two affecting inference are disclosed here:
+Amendment~03 substituted the planned external review
 of the protocol (not obtainable) by an internal triple-role self-audit, and
 Amendment~04 re-derived the secondary inference after the seal (null-centered
-bootstrap with Holm adjustment). Development results
+bootstrap with Holm adjustment). Amendment~01, the deduplication of the
+preregistered \texttt{curated\_family\_template} row, is noted in
+Table~\ref{tab:paired-deltas}. Development results
 were used only to implement the frozen package and are not confirmatory.
 
 Source actors come from two strata: CSG-ID unions of solids with family
@@ -628,7 +646,7 @@ Zen~5, 32 logical CPUs, Windows~11, CPython 3.12.6); the external
 neural-generator runs of Section~\ref{sec:neural-external-wave} used an
 RTX~5090 32~GB GPU on the same machine. We state the hardware context
 explicitly because the motivating mission is a portable flight laptop:
-``instant'' throughout this paper is a per-object CPU wall-clock claim at
+``real-time'' throughout this paper is a per-object CPU wall-clock claim at
 this workstation class, not a measured flight-laptop frame time, and
 dense-scene rendering limits are reported separately in
 Section~\ref{sec:deployment-summary}.
@@ -643,7 +661,7 @@ compact rigid bodies (\texttt{compact\_vehicle}), elongated articulated bodies
 branching vertical growth (\texttt{branching\_vertical}), thin lattice
 structures (\texttt{lattice\_tower}), and rider-plus-cycle combinations
 (\texttt{rider\_cycle}). A post-hoc exploratory drop-one-family re-analysis
-(Section~\ref{sec:results-decomposition}) confirms the headline difference is
+(arm \texttt{t5\_drop\_one\_family} in RP) confirms the headline difference is
 not carried by any single family: excluding any one family leaves the paired
 difference between \(0.152\) and \(0.214\), always above the \(+0.030\)
 margin. As an external case study outside the design distribution, the same
@@ -720,7 +738,7 @@ differences of SPPA against every baseline under the same stratified
 bootstrap construction (method means and wall-clock costs in
 RP). SPPA exceeds its text-only ablation (mean
 \(\Delta=0.130\), CI \([0.116,0.144]\); the preregistered
-\texttt{curated\_family\_tem\-plate} row is this identical method,
+\texttt{curated\_family\_template} row is this identical method,
 deduplicated under Amendment~01) and all lightweight geometric baselines. The margin over the
 strongest baseline is much smaller than the headline: the sealed paired
 advantage over the nonsemantic visual hull~\cite{laurentini1994visual} is
@@ -732,8 +750,8 @@ the hull's median (\(0.567\)) exceeds SPPA's (\(0.563\)) while its
 mean (\(0.522\)) is lower---the paired mean
 advantage is carried by a right tail of actors where the eight-part
 contract substantially out-fits the hull. Median single-call descriptive
-SPPA time is \(9.4\)~ms (p95 \(10.6\)~ms), below the secondary
-local-cost gates of 100~ms median / 250~ms p95; under the identical
+SPPA time is \(9.4\)~ms (P95 \(10.6\)~ms), below the secondary
+local-cost gates of 100~ms median / 250~ms P95; under the identical
 31-candidate budget the SPPA median fit (\(9.43\)~ms) is slightly
 lower than Generic graph's (\(11.34\)~ms), a wall-clock difference the
 package records without attributing it to a single cause. A
@@ -752,7 +770,8 @@ bootstrap, 10{,}000 resamples, seed 77157; all deltas sealed in
 \texttt{confirmatory\_summary.json}). Means and medians are recomputed
 read-only from the sealed \texttt{raw\_metrics.csv}. Row labels are display
 aliases for the preregistered protocol arms \texttt{sppa\_mvfit},
-\texttt{sppa\_text\_only}, and \texttt{generic\_mvfit}.}
+\texttt{sppa\_text\_only}, and \texttt{generic\_mvfit}. Deltas are per-actor
+paired means and need not equal differences of the displayed rounded means.}
 \label{tab:paired-deltas}
 \input{benchmarks/results/paired\_deltas\_table.tex}
 \end{table}
@@ -783,8 +802,8 @@ degrades it.
 \footnotesize
 \caption{Robustness of the primary comparison to degraded observations
 (post-hoc analysis of the sealed confirmatory data under the preregistered
-conditions; \(n{=}240\) per condition). Method means and paired differences
-under the five prespecified observation conditions. The prespecified
+conditions; \(n{=}240\) per condition). Method mean voxel IoU and paired
+differences under the five prespecified observation conditions. The prespecified
 \(+0.030\) margin is exceeded under every condition. Per-condition means of
 all eight methods are in RP.}
 \label{tab:robustness-conditions}
@@ -819,7 +838,8 @@ the previously missing cell, the generic
 graph at the default \(\theta_0\), scores \(0.180\). The family graph with no
 fitting at all (\(0.427\)) already exceeds the fully fitted generic
 competitor (\(0.367\)). Fitting adds \(+0.187\) on the generic graph and
-\(+0.130\) (CI \([0.117,0.143]\)) on the family graph, with a negative
+\(+0.130\) (post-hoc bootstrap CI \([0.117,0.143]\); sealed interval
+\([0.116,0.144]\) in Table~\ref{tab:paired-deltas}) on the family graph, with a negative
 interaction (\(-0.058\)). The H1 headline therefore decomposes into a larger
 representation effect---graph effect at no fit \(+0.248\), CI
 \([0.234,0.261]\)---plus a smaller fitting contribution on top of it, and the
@@ -851,8 +871,11 @@ a mismatched family.
 \caption{Wrong-family analysis (clean condition, \(n{=}240\), mean voxel IoU).
 Rows: true family; columns: family token supplied to the fitter. The diagonal
 is the correct token. Off-diagonal cells fall below the diagonal and, with
-few exceptions (the morphologically close vehicle families), also below the
-generic-graph mean of \(0.367\).}
+few exceptions (the two vehicle families under each other's token, and
+vehicle actors fitted with the \texttt{quadruped} token), also below the
+generic-graph mean of \(0.367\); the correct-token \texttt{lattice\_tower}
+diagonal itself sits below that mean, the sub-voxel resolution effect
+discussed in Section~\ref{sec:primary-results}.}
 \label{fig:wrong-family-matrix}
 \end{figure}
 
@@ -996,12 +1019,13 @@ proxy). The tractor photo is mislabeled by the detector as
 \(7.1\times6.0\)~m footprint is fused to \(4.75\times2.50\times2.60\)~m
 (576-triangle proxy). On the same crops and workstation, six measured neural
 generators run at
-their fastest official configurations WITH official background removal
+their fastest official configurations \emph{with} official background removal
 (Figure~\ref{fig:real-flight-probes}):
 SF3D and TRELLIS.2 even recover the tower lattice, but every generator
 costs orders of magnitude more than the SPPA proxies built from the same
 evidence in milliseconds on CPU with no GPU, and Hunyuan3D-2mini
-returns no surface on the two real aerial crops (per-case values
+returns no surface on the tractor flight crop and on the two aerial vehicle
+photo crops (car and tractor+trailer; per-case values
 in RP). Telemetry
 for these replays is declared assumed flight
 (\(45\)/\(35\)~m AGL, nadir camera), not measured, and no 3D ground truth
@@ -1017,7 +1041,7 @@ condenses the runtime evidence (full Unreal/HISM run matrix in RP). Packaged
 replay at 100 synthetic objects passes a
 33.3~ms desktop frame budget but misses 60~FPS; dense shape updates remain the
 limiting factor even under HISM batching, and curated assets remain preferable
-when a matched asset exists (shape-stream P95 \(6.789\)~ms vs.\ \(22.445\)~ms
+when a matched asset exists (shape-stream P95 \(6.8\)~ms vs.\ \(22.4\)~ms
 on the cow/tower subset). The deployment claim is therefore scoped to the
 regime the mission actually presents---sparse field scenes with tens of
 concurrent dynamic objects, 30~FPS-class rendering---not to dense urban
@@ -1073,8 +1097,8 @@ report them in the order a critical reader will check them
 (Table~\ref{tab:real-stream}; Figure~\ref{fig:real-stream}). \emph{First, the
 headline inverts on real evidence.} SPPA does \emph{not} win the only metric
 this stream can score---2D reprojection overlap---against any nonsemantic
-baseline (\(0.298\) median versus \(0.423\) for Generic graph and
-\(0.44\)--\(0.45\) for OBB, visual hull, and capsule), and the oriented box
+baseline (\(0.298\) median versus \(0.330\) for AABB, \(0.423\) for Generic
+graph, and \(0.44\)--\(0.45\) for OBB, visual hull, and capsule), and the oriented box
 does so at \(0.22\)~ms, roughly fifty times cheaper than our \(11.8\)~ms
 fit. We do not explain this away: the monocular height estimate genuinely
 conflicts with the family prior bounds (a \(13.75\)~m tower column versus a
@@ -1095,7 +1119,11 @@ and trust is measurable}: fit latency (\(11.8\)~ms median) stays far below
 the 2--15~Hz stream rate, and the token-validation signals below turn the
 first finding into a measured routing decision. Localization is outside this
 paper's scope: all methods share the same \(\approx\)\(33\)~m median 3D
-error, set by the monocular observation geometry (full analysis in RP).
+error, set by the monocular observation geometry (full analysis in RP). This
+long-range monocular regime is not the operating point of the companion
+pipeline's \(4\)--\(5\)~m end-to-end error, which is measured at
+\(40\)--\(130\)~m range with calibrated geometry; the two figures describe
+different sensing regimes and are not directly comparable.
 
 \paragraph{Token validation and trust-gated routing (post-hoc).}
 The same stream provides a measured token-validation signal (protocol frozen
@@ -1163,7 +1191,7 @@ Capsule & 0.445 [0.422, 0.466] & 1.31 \\
 
 \begin{figure}[!htb]
 \centering
-\includegraphics[width=0.55\linewidth]{figures/fig_real_stream_main.png}
+\includegraphics[width=\linewidth]{figures/fig_real_stream_main.png}
 \caption{Real stream case study, degraded-signal view. (a)~Frame 642
 (tower crop) with
 detector boxes and exact ground-truth anchors reprojected through the same
@@ -1217,7 +1245,10 @@ Section~\ref{sec:real-stream} are the trust signal that should gate such
 refinement, and per-part bounded refinement within role-declared limits is
 the natural next rung of this ladder, left to future work.
 
-\label{sec:threats}Four threats to validity remain binding.
+\subsection{Threats to validity}
+\label{sec:threats}
+
+Four threats to validity remain binding.
 
 \begin{itemize}
 \item \emph{Design and estimand.} The primary comparison is structurally
@@ -1245,7 +1276,7 @@ LiDAR interchangeability and night, fog, or smoke operation are evaluated
 only through the prespecified synthetic corruptions and exploratory
 simulated-twin demonstrations (retained in RP; post-hoc, not confirmatory),
 not measured on hardware or in degraded weather.
-\item \emph{Runtime and stream.} ``Instant'' is per object (millisecond
+\item \emph{Runtime and stream.} ``Real-time'' is per object (millisecond
 median fit, local CPU wall-clock, not flight-laptop frame time); dense
 packaged shape updates do not reach 60~FPS and remain the
 declared limiting factor, and packaged replays are short synthetic streams. The
